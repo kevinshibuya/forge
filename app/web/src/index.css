@@ -1,0 +1,126 @@
+@import 'tailwindcss';
+
+/* ---- raw theme variables (runtime-switchable; Bench palette, spec §1) ---- */
+:root {
+  --bone: #E7ECEA;
+  --ink: #0A0B0A;
+  --soft: #55605B;
+  --paper: #FFFFFF;
+  --hairline: #0A0B0A;
+  --hairline-soft: color-mix(in srgb, #0A0B0A 18%, transparent);
+  /* The hero band is dark in BOTH themes, so --hero/--hero-panel are deliberately NOT
+     redefined per theme below. --hero matches the dark theme's page ground (--bone), so
+     in dark the band reads as continuous with the page rather than as a darker inset. */
+  --hero: #0E100F;
+  --hero-panel: #161917;
+  --focus: #EE9375;
+  /* Skeleton fill. Derived from --ink so it re-points with the theme and inside
+     [data-surface='dark']; the dark blocks below only raise the percentage,
+     because 7% of a light ink on paper reads heavier than 7% of a pale ink on
+     a dark ground. Never a hex literal. */
+  --skeleton: color-mix(in oklab, var(--ink) 7%, transparent);
+}
+[data-theme='dark'] {
+  --bone: #0E100F; --ink: #E7ECEA; --soft: #9BA5A0; --paper: #161917;
+  --hairline: #3A423E; --hairline-soft: color-mix(in srgb, #3A423E 60%, transparent);
+  --focus: #90DE9D;
+  --skeleton: color-mix(in oklab, var(--ink) 10%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bone: #0E100F; --ink: #E7ECEA; --soft: #9BA5A0; --paper: #161917;
+    --hairline: #3A423E; --hairline-soft: color-mix(in srgb, #3A423E 60%, transparent);
+    --focus: #90DE9D;
+    --skeleton: color-mix(in oklab, var(--ink) 10%, transparent);
+  }
+}
+/* the Overview hero band is dark in BOTH themes (spec §2) — theme-independent constants */
+[data-surface='dark'] {
+  --bone: var(--hero);
+  --paper: var(--hero-panel);
+  --ink: #E7ECEA;
+  --soft: #9BA5A0;
+  --hairline: #3A423E;
+  --hairline-soft: color-mix(in srgb, #3A423E 60%, transparent);
+  /* The ring follows the SURFACE, not the theme. Without this the token leaks in from :root and a
+     permanently-dark band rings salmon in light theme and mint in dark — same pixels, two hues. */
+  --focus: #90DE9D;
+  --skeleton: color-mix(in oklab, var(--ink) 10%, transparent);
+}
+
+/* ---- motion: one curve, two durations (calm and quick, never bouncy) ---- */
+:root {
+  /* Two rungs, both slower than the 150ms Tailwind default the hover/colour transitions already
+     ride — motion that moves LAYOUT needs to be read, not just felt. */
+  --dur-standard: 240ms; /* shell chrome: the rail's width, its chevron */
+  --dur-slow: 360ms; /* chart geometry — longer travel, so a longer settle */
+  /* The same values live in src/lib/motion-tokens.ts for motion/react; change both. */
+}
+/* Every transition that moves geometry reads its duration from the two vars above, so zeroing
+   them IS the reduced-motion story: states still change, they just change instantly. Deliberately
+   not a blanket `* { animation: none }` — that would freeze the spinner and the drafting pulse,
+   which are status indicators rather than decoration. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-standard: 0ms;
+    --dur-slow: 0ms;
+  }
+}
+@theme {
+  /* Signature curve, used by everything that moves: decelerating, zero overshoot. A near-
+     monochrome editorial surface has no room for a spring — this is a settle, not a bounce. */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---- Tailwind theme: wipe the ENTIRE default palette, then map semantic tokens ---- */
+@theme {
+  --color-*: initial;
+}
+@theme inline {
+  --color-bone: var(--bone);
+  --color-ink: var(--ink);
+  --color-soft: var(--soft);
+  --color-paper: var(--paper);
+  --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-skeleton: var(--skeleton);
+  --color-hero: var(--hero);
+  --color-hero-panel: var(--hero-panel);
+  --color-salmon: #EE9375;
+  --color-mint: #90DE9D;
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
+  --radius-pill: 100px;
+  --radius-card: 8px;
+}
+
+html, body { @apply bg-bone text-ink font-sans; }
+::selection { background: var(--color-mint); color: #0A0B0A; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Tell tooltips. The native `title` waits about a second and renders in the OS's own chrome,
+   which reads as a browser artefact rather than part of the app. This appears on hover with no
+   delay, in the app's type and surfaces. `content: attr(data-tip)` keeps the label out of the
+   DOM, so the mark's textContent stays exactly the flagged characters. */
+[data-tip] { position: relative; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  z-index: 40;
+  margin-bottom: 6px;
+  transform: translateX(-50%);
+  padding: 3px 7px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.4;
+  text-transform: lowercase;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+[data-tip]:hover::after { opacity: 1; visibility: visible; }

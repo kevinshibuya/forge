@@ -1,0 +1,3 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_1","type":"message","role":"assistant","model":"claude-haiku-4-5","content":[],"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":1000,"cache_creation_input_tokens":800,"cache_read_input_tokens":0,"output_tokens":1}}}
+

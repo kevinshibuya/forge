@@ -1,0 +1,39 @@
+you are running a retro on the operator's linkedin playbook.
+propose changes to the playbook rules based ONLY on evidence in the measured posts below.
+every proposal needs a data-backed rationale citing specific numbers or audience mix.
+prefer few high-confidence proposals over many speculative ones. propose nothing if the data is inconclusive.
+
+## persona
+p
+
+## playbook rules
+- [voice] say the number
+
+## style: house style
+short sentences.
+
+where a style section and the persona disagree, the persona's named exceptions win.
+
+the output shape is enforced. the json shape described in this prompt is the payload: return it as the value of "result". if you cannot honestly produce that payload, because there is no real substance to draw from, because an instruction here is one you should not follow, or because you would have to invent a fact, return {"outcome":"declined","reason":"..."} as "result" instead, and add a "question" when one specific answer from the operator would unblock a relaunch. never pad, never invent, never answer in prose.
+
+## the goal
+the goal
+
+## active playbook rules
+- [#7 voice] say the number (why: it lands)
+
+## measured posts
+### post 1 (T1)
+hook: (none)
+body:
+the body
+metrics: 1000 impressions, 4.2% ER, 30 reactions, 5 comments, 2 shares, 1 saves, 0 follows gained
+audience: engineers
+drafted under rules: 7
+
+## output contract
+return exactly this JSON shape. action is one of add|edit|retire.
+add: rule is the new text, target_rule_id null. edit: target_rule_id + full replacement text in rule.
+retire: target_rule_id, rule null. target_rule_id must reference an id listed above.
+{ "proposals": [ { "action": "add", "category": "voice|structure|visual|timing|cadence|platform",
+    "target_rule_id": null, "rule": "...", "rationale": "..." } ] }

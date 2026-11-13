@@ -1,0 +1,6 @@
+event: response.created
+data: {"type":"response.created","response":{"id":"resp_1","object":"response","status":"in_progress","model":"gpt-5.6-terra","output":[],"incomplete_details":null},"sequence_number":0}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","item_id":"msg_1","output_index":1,"content_index":0,"delta":"{\"result\":","sequence_number":0}
+

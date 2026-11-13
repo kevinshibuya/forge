@@ -1,0 +1,5 @@
+CREATE DATABASE forge_test;
+\c forge
+CREATE EXTENSION IF NOT EXISTS vector;
+\c forge_test
+CREATE EXTENSION IF NOT EXISTS vector;

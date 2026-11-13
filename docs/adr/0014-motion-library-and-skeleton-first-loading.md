@@ -1,0 +1,20 @@
+# Motion runs through the `motion` library; loading is skeleton-first
+
+The web app's motion had been CSS-only by convention: two chart transitions on Tailwind utilities, two duration tokens and one ease curve in `index.css`, no keyframes. Adding a load-in to every graph (bars growing from the baseline, the metric line drawing left to right and morphing on data change) and a skeleton to every page's loading state pushes past what CSS transitions express cleanly — path-length draws, path morphs, staggered mounts, and a skeleton-to-content crossfade all need JS-driven values or `AnimatePresence`. We adopt the `motion` package (`motion/react`, the current name of framer-motion; 13.x at the time of writing) as the single motion system, migrating the two existing CSS chart transitions onto it so one page never runs two systems. Duration and easing values stay the ones already in `index.css` (240ms, 360ms, `cubic-bezier(0.2, 0, 0, 1)`), defined once in a TypeScript token module that the CSS variables mirror. Reduced motion is honoured through `MotionConfig reducedMotion="user"`, keeping the existing rule that status indicators (the spinner, the drafting pulse) keep moving.
+
+Loading becomes **skeleton-first**: a region with no data for the current page shows a Skeleton that replicates the final layout, on a dedicated `--skeleton` fill token, with a slow opacity pulse and a short fade-in of the real content over the same footprint. The `Spinner` survives only as an in-place status indicator (inside buttons, "retro running", "loading the canvas"); it no longer gates a page or a section. To keep skeletons rare, react-query `gcTime` rises to 30 minutes so data survives navigation for a session, every filter- or range-keyed query keeps previous data across a param change (id-keyed queries do not: the previous record is another post, and the Workspace editor is seeded from the query), and the shell prefetches each page's default queries on nav hover/focus and once on idle after mount.
+
+## Considered options
+
+- **Stay CSS-only** (keyframes plus a `Skeleton` primitive): rejected. Covers bars and pulses, but the line draw, the path morph and the crossfade would each need bespoke JS, and the two systems would drift.
+- **Shimmer sweep for skeletons**: rejected. It is the stock loading signature; the opacity pulse reuses the drafting pulse's language.
+- **Split the single-payload endpoints** (analytics board, post analytics, planner stream) so sections could gate independently: rejected. One structured skeleton over the whole body delivers the same visual result without API surgery on pages that load in one local round trip.
+- **Count-up numbers**: rejected. Hero metrics stay static; only bars and lines animate.
+
+## Consequences
+
+- The Overview's comparison bars and weekday bars, which already transition via `transition-[width]` / `transition-[height]` classes, move to `motion` values in the same PR. Their behaviour on range change is unchanged.
+- Graphs re-run the load-in on every mount, including warm navigations. Only data changes on a mounted graph skip it.
+- **The metric line does not morph its path (amended 2026-09-02, commit `76b7d08`).** The decision above anticipated a morph on a same-shape data change. In motion 13.2.0, animating the `d` attribute wrote the literal string `"undefined"` into it and the browser rejected the path; route-smoke caught it. Every data change is a 150ms crossfade instead, driven by keying the marks group on the data rather than the geometry — which also leaves a resize free to track the gridlines frame-for-frame. Reviving the morph means animating point coordinates rather than the path string, which is a larger change and was not pursued.
+- Hooks export `queryOptions` factories so the shell can prefetch without duplicating query keys.
+- Component tests (ADR 0013) gain one pending-state case per skeletonised page, asserting the skeleton renders instead of a spinner. Animation timing is not tested; the eye pass owns it.

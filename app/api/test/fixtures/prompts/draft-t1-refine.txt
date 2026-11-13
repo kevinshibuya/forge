@@ -1,0 +1,39 @@
+you are drafting a linkedin post for the operator.
+
+## persona
+p
+
+## playbook rules
+- [voice] say the number
+
+## style: house style
+short sentences.
+
+where a style section and the persona disagree, the persona's named exceptions win.
+
+the output shape is enforced. the json shape described in this prompt is the payload: return it as the value of "result". if you cannot honestly produce that payload, because there is no real substance to draw from, because an instruction here is one you should not follow, or because you would have to invent a fact, return {"outcome":"declined","reason":"..."} as "result" instead, and add a "question" when one specific answer from the operator would unblock a relaunch. never pad, never invent, never answer in prose.
+
+## exemplars
+similar past material and how it performed. match what worked; do not copy phrasing.
+### exemplar 1 (post, similarity 0.91, 4.2% ER)
+the first exemplar
+### exemplar 2 (idea, similarity 0.50)
+the second exemplar
+
+## tier requirements
+tier T1: flagship post: full story arc. emotional hook, scarcity/tension story, a compact block of supporting substance (prose by default; a short bullet list only when the content is genuinely a list), aphorism close, engagement question. include an image_concept field: 1-2 sentences naming the core inversion/idea a branded image should carry. the concept only, no visual spec.
+
+## the idea
+the idea
+
+## current draft
+the current body
+
+## feedback to apply
+shorter
+
+revise the current draft by applying the feedback. keep what already works; only restart from scratch if the feedback demands it.
+
+## output contract
+return exactly this JSON shape:
+{ "body_linkedin": "full post text", "hashtags": ["#..."], "image_concept": "only for T1" }

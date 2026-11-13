@@ -1,0 +1,32 @@
+## persona
+p
+
+## playbook rules
+- [voice] say the number
+
+## style: house style
+short sentences.
+
+where a style section and the persona disagree, the persona's named exceptions win.
+
+the output shape is enforced. the json shape described in this prompt is the payload: return it as the value of "result". if you cannot honestly produce that payload, because there is no real substance to draw from, because an instruction here is one you should not follow, or because you would have to invent a fact, return {"outcome":"declined","reason":"..."} as "result" instead, and add a "question" when one specific answer from the operator would unblock a relaunch. never pad, never invent, never answer in prose.
+
+You are editing an existing LinkedIn post. Below is the FULL current body. Exactly one span is
+wrapped in <<<SELECTED>>> ... <<<END SELECTED>>> markers. Those markers are annotations, not
+part of the text.
+
+--- CURRENT BODY ---
+one <<<SELECTED>>>two<<<END SELECTED>>> three
+--- END CURRENT BODY ---
+
+INSTRUCTION FOR THE SELECTED SPAN:
+make it louder
+
+RULES:
+- Rewrite ONLY the selected span, following the instruction.
+- Leave the text outside the selection as it is; adapt it only where coherence requires, and then minimally.
+- Strip the markers from your answer.
+- Keep the author's voice, formatting, line breaks, and any hashtags exactly as they are.
+
+Return the FULL revised body as JSON, and nothing else:
+{"body_linkedin": "..."}

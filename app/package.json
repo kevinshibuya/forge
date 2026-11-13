@@ -1,0 +1,11 @@
+{
+  "name": "forge",
+  "private": true,
+  "workspaces": ["shared", "engine-cli", "api", "web"],
+  "scripts": {
+    "build:shared": "npm run build -w @forge/shared",
+    "build:engine-cli": "npm run build -w @forge/engine-cli",
+    "typecheck": "npm run build:shared && npm run build:engine-cli && npm run typecheck -w @forge/shared -w @forge/engine-cli -w @forge/api -w web",
+    "test": "npm run build:shared && npm run build:engine-cli && npm test -w @forge/shared -w @forge/engine-cli -w @forge/api -w web"
+  }
+}
